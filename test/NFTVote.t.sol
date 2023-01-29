@@ -21,20 +21,20 @@ contract NFTVoteTest is BaseTest {
     deployCoins();
 
     VeArtProxy artProxy = new VeArtProxy();
-    escrow = new VotingEscrow(address(VELO), address(artProxy));
+    escrow = new VotingEscrow(address(STERLING), address(artProxy));
     gov = new TestL2Governance(escrow);
 
     // test variable to vote on
     flag = new FlagCondition();
     flag.transferOwnership(address(gov));
 
-    VELO.mint(address(this), 1e21);
+    STERLING.mint(address(this), 1e21);
     vm.roll(block.number + 1);
   }
 
   function testLockAndPropose() public {
     uint256 fourYears = 4 * 365 * 24 * 3600;
-    VELO.approve(address(escrow), 1e21);
+    STERLING.approve(address(escrow), 1e21);
     escrow.create_lock(1e21, fourYears);
     uint256 quorum = gov.quorum(block.timestamp);
     uint256 numVotes = gov.getVotes(address(this), block.timestamp);

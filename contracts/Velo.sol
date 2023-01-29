@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity 0.8.13;
 
-import "contracts/interfaces/IVelo.sol";
+import "contracts/interfaces/ISterling.sol";
 
-contract Velo is IVelo {
+contract Sterling is ISterling {
 
-    string public constant name = "Velodrome";
-    string public constant symbol = "VELO";
+    string public constant name = "Sterling";
+    string public constant symbol = "STERLING";
     uint8 public constant decimals = 18;
     uint public totalSupply = 0;
 
@@ -44,7 +44,7 @@ contract Velo is IVelo {
 
     // Initial mint: total 82M
     //  4M for "Genesis" pools
-    // 30M for liquid team allocation (40M excl init veNFT)
+    // 30M for liquid team allocation (40M excl init veSTERLING)
     // 48M for future partners
     function initialMint(address _recipient) external {
         require(msg.sender == minter && !initialMinted);

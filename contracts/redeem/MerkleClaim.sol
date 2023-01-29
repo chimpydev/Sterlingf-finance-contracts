@@ -3,17 +3,17 @@ pragma solidity 0.8.13;
 
 /// ============ Imports ============
 
-import {IVelo} from "contracts/interfaces/IVelo.sol";
+import {ISterling} from "contracts/interfaces/ISterling.sol";
 import {MerkleProof} from "openzeppelin-contracts/contracts/utils/cryptography/MerkleProof.sol"; // OZ: MerkleProof
 
 /// @title MerkleClaim
-/// @notice Claims VELO for members of a merkle tree
+/// @notice Claims STERLING for members of a merkle tree
 /// @author Modified from Merkle Airdrop Starter (https://github.com/Anish-Agnihotri/merkle-airdrop-starter/blob/master/contracts/src/MerkleClaimERC20.sol)
 contract MerkleClaim {
     /// ============ Immutable storage ============
 
-    /// @notice VELO token to claim
-    IVelo public immutable VELO;
+    /// @notice STERLING token to claim
+    ISterling public immutable STERLING;
     /// @notice ERC20-claimee inclusion root
     bytes32 public immutable merkleRoot;
 
@@ -25,10 +25,10 @@ contract MerkleClaim {
     /// ============ Constructor ============
 
     /// @notice Creates a new MerkleClaim contract
-    /// @param _velo address
+    /// @param _sterling address
     /// @param _merkleRoot of claimees
-    constructor(address _velo, bytes32 _merkleRoot) {
-        VELO = IVelo(_velo);
+    constructor(address _sterling, bytes32 _merkleRoot) {
+        STERLING = ISterling(_sterling);
         merkleRoot = _merkleRoot;
     }
 
@@ -62,7 +62,7 @@ contract MerkleClaim {
         hasClaimed[to] = true;
 
         // Claim tokens for address
-        require(VELO.claim(to, amount), "CLAIM_FAILED");
+        require(STERLING.claim(to, amount), "CLAIM_FAILED");
 
         // Emit claim event
         emit Claim(to, amount);

@@ -5,7 +5,7 @@ Solidly has a Bug Bounty program to encourage security researchers to spend time
 ### Rules
 
 1. Bug has not been publicly disclosed.
-2. Vulnerabilities that have been previously submitted by another contributor or already known by the development team are not eligible for rewards.
+2. Vulnerabilities that have been previously submitted by another contributor or already known by the desterlingpment team are not eligible for rewards.
 3. The size of the bounty payout depends on the assessment of the severity of the exploit. Please refer to the rewards [section](#rewards) below for additional details.
 4. Bugs must be reproducible in order for us to verify the vulnerability.
 5. Rewards and the validity of bugs are determined by the security team and any payouts are made at their sole discretion.

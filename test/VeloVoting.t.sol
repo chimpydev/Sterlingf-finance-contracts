@@ -3,7 +3,7 @@ pragma solidity 0.8.13;
 
 import "./BaseTest.sol";
 
-contract VeloVotingTest is BaseTest {
+contract SterlingVotingTest is BaseTest {
     VotingEscrow escrow;
     GaugeFactory gaugeFactory;
     BribeFactory bribeFactory;
@@ -18,13 +18,13 @@ contract VeloVotingTest is BaseTest {
         deployOwners();
         deployCoins();
         mintStables();
-        uint256[] memory amountsVelo = new uint256[](2);
-        amountsVelo[0] = 1e25;
-        amountsVelo[1] = 1e25;
-        mintVelo(owners, amountsVelo);
+        uint256[] memory amountsSterling = new uint256[](2);
+        amountsSterling[0] = 1e25;
+        amountsSterling[1] = 1e25;
+        mintSterling(owners, amountsSterling);
         team = new TestOwner();
         VeArtProxy artProxy = new VeArtProxy();
-        escrow = new VotingEscrow(address(VELO), address(artProxy));
+        escrow = new VotingEscrow(address(STERLING), address(artProxy));
         factory = new PairFactory();
         router = new Router(address(factory), address(owner));
         gaugeFactory = new GaugeFactory();
@@ -38,9 +38,9 @@ contract VeloVotingTest is BaseTest {
 
         address[] memory tokens = new address[](2);
         tokens[0] = address(FRAX);
-        tokens[1] = address(VELO);
+        tokens[1] = address(STERLING);
         voter.initialize(tokens, address(owner));
-        VELO.approve(address(escrow), TOKEN_1);
+        STERLING.approve(address(escrow), TOKEN_1);
         escrow.create_lock(TOKEN_1, 4 * 365 * 86400);
         distributor = new RewardsDistributor(address(escrow));
         escrow.setVoter(address(voter));
@@ -51,13 +51,13 @@ contract VeloVotingTest is BaseTest {
             address(distributor)
         );
         distributor.setDepositor(address(minter));
-        VELO.setMinter(address(minter));
+        STERLING.setMinter(address(minter));
 
-        VELO.approve(address(router), TOKEN_1);
+        STERLING.approve(address(router), TOKEN_1);
         FRAX.approve(address(router), TOKEN_1);
         router.addLiquidity(
             address(FRAX),
-            address(VELO),
+            address(STERLING),
             false,
             TOKEN_1,
             TOKEN_1,
@@ -67,13 +67,13 @@ contract VeloVotingTest is BaseTest {
             block.timestamp
         );
 
-        address pair = router.pairFor(address(FRAX), address(VELO), false);
+        address pair = router.pairFor(address(FRAX), address(STERLING), false);
 
-        VELO.approve(address(voter), 5 * TOKEN_100K);
+        STERLING.approve(address(voter), 5 * TOKEN_100K);
         voter.createGauge(pair);
         vm.roll(block.number + 1); // fwd 1 block because escrow.balanceOfNFT() returns 0 in same block
         assertGt(escrow.balanceOfNFT(1), 995063075414519385);
-        assertEq(VELO.balanceOf(address(escrow)), TOKEN_1);
+        assertEq(STERLING.balanceOf(address(escrow)), TOKEN_1);
 
         address[] memory pools = new address[](1);
         pools[0] = pair;
@@ -89,18 +89,18 @@ contract VeloVotingTest is BaseTest {
         assertEq(escrow.ownerOf(2), address(owner));
         assertEq(escrow.ownerOf(3), address(0));
         vm.roll(block.number + 1);
-        assertEq(VELO.balanceOf(address(minter)), 14 * TOKEN_1M);
+        assertEq(STERLING.balanceOf(address(minter)), 14 * TOKEN_1M);
 
-        uint256 before = VELO.balanceOf(address(owner));
+        uint256 before = STERLING.balanceOf(address(owner));
         minter.update_period(); // initial period week 1
-        uint256 after_ = VELO.balanceOf(address(owner));
+        uint256 after_ = STERLING.balanceOf(address(owner));
         assertEq(minter.weekly(), 15 * TOKEN_1M);
         assertEq(after_ - before, 0);
         vm.warp(block.timestamp + 86400 * 7);
         vm.roll(block.number + 1);
-        before = VELO.balanceOf(address(owner));
+        before = STERLING.balanceOf(address(owner));
         minter.update_period(); // initial period week 2
-        after_ = VELO.balanceOf(address(owner));
+        after_ = STERLING.balanceOf(address(owner));
         assertLt(minter.weekly(), 15 * TOKEN_1M);  // <15M for week shift
     }
 
