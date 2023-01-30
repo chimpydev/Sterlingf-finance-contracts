@@ -42,14 +42,14 @@ contract Sterling is ISterling {
         merkleClaim = _merkleClaim;
     }
 
-    // Initial mint: total 1M
+    // Initial mint: total 900k
     // 100k for "Genesis" pools
     // 150k for liquid team allocation (150k excl init veSTERLING)
-    // 750k for future partners
+    // 650k for future partners
     function initialMint(address _recipient) external {
         require(msg.sender == minter && !initialMinted);
         initialMinted = true;
-        _mint(_recipient, 1 * 1e6 * 1e18);
+        _mint(_recipient, 9 * 1e5 * 1e18);
     }
 
     function approve(address _spender, uint _value) external returns (bool) {
