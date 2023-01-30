@@ -22,6 +22,7 @@ contract Minter is IMinter {
     uint public weekly = 25_000 * 1e18; // represents a starting weekly emission of 25K STERLING (STERLING has 18 decimals)
     uint public active_period;
     uint internal constant LOCK = 86400 * 7 * 8; // 8 weeks
+    uint internal constant LOCK_PARTNER = 86400 * 7 * 104; // 104 weeks (2 years)
 
     address internal initializer;
     address public team;
@@ -55,7 +56,7 @@ contract Minter is IMinter {
         _sterling.mint(address(this), max);
         _sterling.approve(address(_ve), type(uint).max);
         for (uint i = 0; i < claimants.length; i++) {
-            _ve.create_lock_for_partner(amounts[i], LOCK, claimants[i]); // CREATES LOCK FOR PARTNER TOKENS
+            _ve.create_lock_for_partner(amounts[i], LOCK_PARTNER, claimants[i]); // CREATES LOCK_PARTNER FOR PARTNER TOKENS
         }
         initializer = address(0);
         active_period = ((block.timestamp) / WEEK) * WEEK; // allow minter.update_period() to mint new emissions THIS Thursday
