@@ -12,7 +12,8 @@ import "contracts/interfaces/IVotingEscrow.sol";
 
 contract Minter is IMinter {
     uint internal constant WEEK = 86400 * 7; // allows minting once per week (reset every Thursday 00:00 UTC)
-    uint internal constant EMISSION = 990;
+    uint internal emission = 990;
+    uint internal numEpoch;
     uint internal constant TAIL_EMISSION = 2;
     uint internal constant PRECISION = 1000;
     ISterling public immutable _sterling;
@@ -28,7 +29,7 @@ contract Minter is IMinter {
     address public team;
     address public pendingTeam;
     uint public teamRate;
-    uint public constant MAX_TEAM_RATE = 5000; // 5000 bps = 5%
+    uint public constant MAX_TEAM_RATE = 50; // 50 bps = 5%
 
     event Mint(address indexed sender, uint weekly, uint circulating_supply, uint circulating_emission);
 
@@ -39,7 +40,7 @@ contract Minter is IMinter {
     ) {
         initializer = msg.sender;
         team = msg.sender;
-        teamRate = 5000; // 5000 bps = 5%
+        teamRate = 50; // 50 bps = 5%
         _sterling = ISterling(IVotingEscrow(__ve).token());
         _voter = IVoter(__voter);
         _ve = IVotingEscrow(__ve);
@@ -85,7 +86,7 @@ contract Minter is IMinter {
 
     // emission calculation is 1% of available supply to mint adjusted by circulating / total supply
     function calculate_emission() public view returns (uint) {
-        return (weekly * EMISSION) / PRECISION;
+        return (weekly * emission) / PRECISION;
     }
 
     // weekly emission takes the max of calculated (aka target) emission versus circulating tail end emission
@@ -123,13 +124,18 @@ contract Minter is IMinter {
 
             // uint _teamEmissions = (teamRate * (_growth + weekly)) /
             //     (PRECISION - teamRate);
-            uint _teamEmissions = (teamRate * weekly) / (PRECISION - teamRate); // CONFIRM THIS
+            uint _teamEmissions = (teamRate * weekly) / PRECISION;
             uint _required = weekly + _teamEmissions;
             // uint _required = _growth + weekly + _teamEmissions;
             uint _balanceOf = _sterling.balanceOf(address(this));
             if (_balanceOf < _required) {
                 _sterling.mint(address(this), _required - _balanceOf);
             }
+
+            unchecked {
+                ++numEpoch;
+            }
+            if (numEpoch == 208) emission = 999;
 
             require(_sterling.transfer(team, _teamEmissions));
 
