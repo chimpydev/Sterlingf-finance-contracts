@@ -18,7 +18,7 @@ contract Minter is IMinter {
     ISterling public immutable _sterling;
     IVoter public immutable _voter;
     IVotingEscrow public immutable _ve;
-    IRewardsDistributor public immutable _rewards_distributor;
+    // IRewardsDistributor public immutable _rewards_distributor;
     uint public weekly = 25_000 * 1e18; // represents a starting weekly emission of 25K STERLING (STERLING has 18 decimals)
     uint public active_period;
     uint internal constant LOCK = 86400 * 7 * 8; // 8 weeks
@@ -35,7 +35,7 @@ contract Minter is IMinter {
     constructor(
         address __voter, // the voting & distribution system
         address __ve, // the ve(3,3) system that will be locked into
-        address __rewards_distributor // the distribution system that ensures users aren't diluted
+        // address __rewards_distributor // the distribution system that ensures users aren't diluted
     ) {
         initializer = msg.sender;
         team = msg.sender;
@@ -43,7 +43,7 @@ contract Minter is IMinter {
         _sterling = ISterling(IVotingEscrow(__ve).token());
         _voter = IVoter(__voter);
         _ve = IVotingEscrow(__ve);
-        _rewards_distributor = IRewardsDistributor(__rewards_distributor);
+        // _rewards_distributor = IRewardsDistributor(__rewards_distributor);
         active_period = ((block.timestamp + (2 * WEEK)) / WEEK) * WEEK;
     }
 
@@ -98,16 +98,17 @@ contract Minter is IMinter {
         return (circulating_supply() * TAIL_EMISSION) / PRECISION;
     }
 
+    // REMOVE REBASE
     // calculate inflation and adjust ve balances accordingly
-    function calculate_growth(uint _minted) public view returns (uint) {
-        uint _veTotal = _ve.totalSupply();
-        uint _sterlingTotal = _sterling.totalSupply();
-        return
-            (((((_minted * _veTotal) / _sterlingTotal) * _veTotal) / _sterlingTotal) *
-                _veTotal) /
-            _sterlingTotal /
-            2;
-    }
+    // function calculate_growth(uint _minted) public view returns (uint) {
+    //     uint _veTotal = _ve.totalSupply();
+    //     uint _sterlingTotal = _sterling.totalSupply();
+    //     return
+    //         (((((_minted * _veTotal) / _sterlingTotal) * _veTotal) / _sterlingTotal) *
+    //             _veTotal) /
+    //         _sterlingTotal /
+    //         2;
+    // }
 
     // update period can only be called once per cycle (1 week)
     function update_period() external returns (uint) {
@@ -117,19 +118,25 @@ contract Minter is IMinter {
             active_period = _period;
             weekly = weekly_emission();
 
-            uint _growth = calculate_growth(weekly);
-            uint _teamEmissions = (teamRate * (_growth + weekly)) /
-                (PRECISION - teamRate);
-            uint _required = _growth + weekly + _teamEmissions;
+            // REMOVE REBASE
+            // uint _growth = calculate_growth(weekly);
+
+            // uint _teamEmissions = (teamRate * (_growth + weekly)) /
+            //     (PRECISION - teamRate);
+            uint _teamEmissions = (teamRate * weekly) / (PRECISION - teamRate); // CONFIRM THIS
+            uint _required = weekly + _teamEmissions;
+            // uint _required = _growth + weekly + _teamEmissions;
             uint _balanceOf = _sterling.balanceOf(address(this));
             if (_balanceOf < _required) {
                 _sterling.mint(address(this), _required - _balanceOf);
             }
 
             require(_sterling.transfer(team, _teamEmissions));
-            require(_sterling.transfer(address(_rewards_distributor), _growth));
-            _rewards_distributor.checkpoint_token(); // checkpoint token balance that was just minted in rewards distributor
-            _rewards_distributor.checkpoint_total_supply(); // checkpoint supply
+
+            // REMOVE REBASE
+            // require(_sterling.transfer(address(_rewards_distributor), _growth));
+            // _rewards_distributor.checkpoint_token(); // checkpoint token balance that was just minted in rewards distributor
+            // _rewards_distributor.checkpoint_total_supply(); // checkpoint supply
 
             _sterling.approve(address(_voter), weekly);
             _voter.notifyRewardAmount(weekly);

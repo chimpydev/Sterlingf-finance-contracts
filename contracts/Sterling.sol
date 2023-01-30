@@ -44,12 +44,11 @@ contract Sterling is ISterling {
 
     // Initial mint: total 900k
     // 100k for "Genesis" pools
-    // 150k for liquid team allocation (150k excl init veSTERLING)
-    // 650k for future partners
+    // 500k for future partners
     function initialMint(address _recipient) external {
         require(msg.sender == minter && !initialMinted);
         initialMinted = true;
-        _mint(_recipient, 9 * 1e5 * 1e18);
+        _mint(_recipient, 6 * 1e5 * 1e18);
     }
 
     function approve(address _spender, uint _value) external returns (bool) {
