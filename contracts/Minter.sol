@@ -23,7 +23,7 @@ contract Minter is IMinter {
     uint public weekly = 25_000 * 1e18; // represents a starting weekly emission of 25K STERLING (STERLING has 18 decimals)
     uint public active_period;
     uint internal constant LOCK = 86400 * 7 * 8; // 8 weeks
-    uint internal constant LOCK_PARTNER = 86400 * 7 * 104; // 104 weeks (2 years)
+    uint internal constant LOCK_PARTNER = 86400 * 7 * 208; // 208 weeks (4 years)
 
     address internal initializer;
     address public team;

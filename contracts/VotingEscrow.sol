@@ -536,7 +536,7 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
 
     uint internal constant WEEK = 1 weeks;
     uint internal constant MAXTIME = 8 * 7 * 86400;
-    int128 internal constant iMAXTIME = 8 * 7 * 86400;
+    int128 internal constant iMAXTIME = 8 * 7 * 86400; // PARTNER NEEDS NEW TIME CHANGE THIS TODO
     uint internal constant MULTIPLIER = 1 ether;    
 
     /*//////////////////////////////////////////////////////////////
@@ -780,9 +780,8 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
 
         require(_value > 0); // dev: need non-zero value
         require(unlock_time > block.timestamp, 'Can only lock until time in the future');
-        require(unlock_time <= block.timestamp + MAXTIME, 'Voting lock can be 8 weeks max');
         if (_isPartnerLock) {
-            require(unlock_time <= block.timestamp + (MAXTIME * 13), 'Voting lock can be 2 years max');
+            require(unlock_time <= block.timestamp + (MAXTIME * 26), 'Voting lock can be 4 years max');
             isPartnerUser[_to] = true
         } else {
             require(unlock_time <= block.timestamp + MAXTIME, 'Voting lock can be 8 weeks max');
@@ -847,7 +846,7 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
 
         bool isPartnerUser = isPartnerUser[msg.sender];
         if (isPartnerUser) {
-            require(unlock_time <= block.timestamp + (MAXTIME * 13), 'Voting lock can be 2 years max');
+            require(unlock_time <= block.timestamp + (MAXTIME * 26), 'Voting lock can be 4 years max');
         } else {
             require(unlock_time <= block.timestamp + MAXTIME, 'Voting lock can be 8 weeks max');
         } 
