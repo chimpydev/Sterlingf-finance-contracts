@@ -69,6 +69,8 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
     address public team;
     address public artProxy;
 
+    address public minterContract;
+
     mapping(uint => Point) public point_history; // epoch -> unsigned point
 
     /// @dev Mapping of interface id to bool about whether or not it's supported
@@ -122,6 +124,10 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
         _entered_state = _not_entered;
     }
 
+    modifier onlyMinterContract() {
+        require(msg.sender == minterContract, "VotingEscrow: Not allowed to do this, you must be the Minter Contract");
+    }
+
     /*///////////////////////////////////////////////////////////////
                              METADATA STORAGE
     //////////////////////////////////////////////////////////////*/
@@ -134,6 +140,11 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
     function setTeam(address _team) external {
         require(msg.sender == team);
         team = _team;
+    }
+
+    function setMinterContract(address _minterContract) external {
+        require(msg.sender == team);
+        minterContract = _minterContract;
     }
 
     function setArtProxy(address _proxy) external {
@@ -515,6 +526,7 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
                              ESCROW STORAGE
     //////////////////////////////////////////////////////////////*/
 
+    mapping(address => bool) public isPartnerUser;
     mapping(uint => uint) public user_point_epoch;
     mapping(uint => Point[1000000000]) public user_point_history; // user -> Point[user_epoch]
     mapping(uint => LockedBalance) public locked;
@@ -525,7 +537,7 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
     uint internal constant WEEK = 1 weeks;
     uint internal constant MAXTIME = 8 * 7 * 86400;
     int128 internal constant iMAXTIME = 8 * 7 * 86400;
-    uint internal constant MULTIPLIER = 1 ether;
+    uint internal constant MULTIPLIER = 1 ether;    
 
     /*//////////////////////////////////////////////////////////////
                               ESCROW LOGIC
@@ -763,12 +775,18 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
     /// @param _value Amount to deposit
     /// @param _lock_duration Number of seconds to lock tokens for (rounded down to nearest week)
     /// @param _to Address to deposit
-    function _create_lock(uint _value, uint _lock_duration, address _to) internal returns (uint) {
+    function _create_lock(uint _value, uint _lock_duration, address _to, bool _isPartnerLock) internal returns (uint) {
         uint unlock_time = (block.timestamp + _lock_duration) / WEEK * WEEK; // Locktime is rounded down to weeks
 
         require(_value > 0); // dev: need non-zero value
         require(unlock_time > block.timestamp, 'Can only lock until time in the future');
         require(unlock_time <= block.timestamp + MAXTIME, 'Voting lock can be 8 weeks max');
+        if (_isPartnerLock) {
+            require(unlock_time <= block.timestamp + (MAXTIME * 13), 'Voting lock can be 2 years max');
+            isPartnerUser[_to] = true
+        } else {
+            require(unlock_time <= block.timestamp + MAXTIME, 'Voting lock can be 8 weeks max');
+        }
 
         ++tokenId;
         uint _tokenId = tokenId;
@@ -782,7 +800,7 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
     /// @param _value Amount to deposit
     /// @param _lock_duration Number of seconds to lock tokens for (rounded down to nearest week)
     function create_lock(uint _value, uint _lock_duration) external nonreentrant returns (uint) {
-        return _create_lock(_value, _lock_duration, msg.sender);
+        return _create_lock(_value, _lock_duration, msg.sender, false);
     }
 
     /// @notice Deposit `_value` tokens for `_to` and lock for `_lock_duration`
@@ -790,7 +808,15 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
     /// @param _lock_duration Number of seconds to lock tokens for (rounded down to nearest week)
     /// @param _to Address to deposit
     function create_lock_for(uint _value, uint _lock_duration, address _to) external nonreentrant returns (uint) {
-        return _create_lock(_value, _lock_duration, _to);
+        return _create_lock(_value, _lock_duration, _to, false);
+    }
+
+    /// @notice Deposit `_value` tokens for `_to` and lock for `_lock_duration`
+    /// @param _value Amount to deposit
+    /// @param _lock_duration Number of seconds to lock tokens for (rounded down to nearest week)
+    /// @param _to Address to deposit
+    function create_lock_for_partner(uint _value, uint _lock_duration, address _to) external nonreentrant onlyMinterContract returns (uint) {
+        return _create_lock(_value, _lock_duration, _to, true);
     }
 
     /// @notice Deposit `_value` additional tokens for `_tokenId` without modifying the unlock time
@@ -818,7 +844,13 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
         require(_locked.end > block.timestamp, 'Lock expired');
         require(_locked.amount > 0, 'Nothing is locked');
         require(unlock_time > _locked.end, 'Can only increase lock duration');
-        require(unlock_time <= block.timestamp + MAXTIME, 'Voting lock can be 8 years max');
+
+        bool isPartnerUser = isPartnerUser[msg.sender];
+        if (isPartnerUser) {
+            require(unlock_time <= block.timestamp + (MAXTIME * 13), 'Voting lock can be 2 years max');
+        } else {
+            require(unlock_time <= block.timestamp + MAXTIME, 'Voting lock can be 8 weeks max');
+        } 
 
         _deposit_for(_tokenId, 0, unlock_time, _locked, DepositType.INCREASE_UNLOCK_TIME);
     }

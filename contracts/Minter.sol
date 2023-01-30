@@ -55,7 +55,7 @@ contract Minter is IMinter {
         _sterling.mint(address(this), max);
         _sterling.approve(address(_ve), type(uint).max);
         for (uint i = 0; i < claimants.length; i++) {
-            _ve.create_lock_for(amounts[i], LOCK, claimants[i]);
+            _ve.create_lock_for_partner(amounts[i], LOCK, claimants[i]); // CREATES LOCK FOR PARTNER TOKENS
         }
         initializer = address(0);
         active_period = ((block.timestamp) / WEEK) * WEEK; // allow minter.update_period() to mint new emissions THIS Thursday

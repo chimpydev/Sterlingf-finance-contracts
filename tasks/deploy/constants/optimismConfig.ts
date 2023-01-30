@@ -14,7 +14,7 @@ const TEN_MILLION = ethers.BigNumber.from("10")
 const TWENTY_MILLION = ethers.BigNumber.from("20")
   .mul(MILLION)
   .mul(TOKEN_DECIMALS);
-const PARTNER_MAX = ethers.BigNumber.from("78")
+const PARTNER_MAX = ethers.BigNumber.from("0.75")
   .mul(MILLION)
   .mul(TOKEN_DECIMALS);
 
