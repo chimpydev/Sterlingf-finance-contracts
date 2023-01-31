@@ -527,6 +527,7 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
     //////////////////////////////////////////////////////////////*/
 
     mapping(uint => bool) public isPartnerToken;
+    mapping(uint => uint) public partnerTokenInitialLockTime;
     mapping(uint => uint) public user_point_epoch;
     mapping(uint => Point[1000000000]) public user_point_history; // user -> Point[user_epoch]
     mapping(uint => LockedBalance) public locked;
@@ -537,7 +538,6 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
     uint internal constant WEEK = 1 weeks;
     uint internal constant MAXTIME = 8 * 7 * 86400;
     int128 internal constant iMAXTIME = 8 * 7 * 86400;
-    int128 internal constant iMAXTIME_PARTNER = 208 * 7 * 86400; // 4 years
     uint internal constant MULTIPLIER = 1 ether;    
 
     /*//////////////////////////////////////////////////////////////
@@ -587,7 +587,8 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
             // Kept at zero when they have to
             if (isPartnerToken[_tokenId]) {
                 if (old_locked.end > block.timestamp && old_locked.amount > 0) {
-                    if (numEpoch > 200) {
+                    uint currentPartnerEpoch = ((block.timestamp - partnerTokenInitialLockTime[_tokenId]) / (old_locked.end - partnerTokenInitialLockTime[_tokenId])) * 208; // percentage of time passed since initial lock until end lock time multplied by the number of locking weeks for partners
+                    if (currentPartnerEpoch > 200) {
                         u_old.slope = old_locked.amount / iMAXTIME;
                         u_old.bias = u_old.slope * int128(int256(old_locked.end - block.timestamp));
                     } else {
@@ -596,7 +597,8 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
                     }
                 }
                 if (new_locked.end > block.timestamp && new_locked.amount > 0) {
-                    if (numEpoch > 200) {                
+                    uint currentPartnerEpoch = ((block.timestamp - partnerTokenInitialLockTime[_tokenId]) / (new_locked.end - partnerTokenInitialLockTime[_tokenId])) * 208; // percentage of time passed since initial lock until end lock time multplied by the number of locking weeks for partners
+                    if (currentPartnerEpoch > 200) {                
                         u_new.slope = new_locked.amount / iMAXTIME;
                         u_new.bias = u_new.slope * int128(int256(new_locked.end - block.timestamp));
                     } else {
@@ -812,6 +814,7 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
         uint _tokenId = tokenId;
         if (_isPartnerLock) {
             isPartnerToken[_tokenId] = true;
+            partnerTokenInitialLockTime[_tokenId] = block.timestamp;
         }
         _mint(_to, _tokenId);
 
