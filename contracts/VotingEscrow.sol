@@ -526,7 +526,7 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
                              ESCROW STORAGE
     //////////////////////////////////////////////////////////////*/
 
-    mapping(address => uint) public isPartnerToken;
+    mapping(uint => bool) public isPartnerToken;
     mapping(uint => uint) public user_point_epoch;
     mapping(uint => Point[1000000000]) public user_point_history; // user -> Point[user_epoch]
     mapping(uint => LockedBalance) public locked;
