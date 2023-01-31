@@ -536,7 +536,8 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
 
     uint internal constant WEEK = 1 weeks;
     uint internal constant MAXTIME = 8 * 7 * 86400;
-    int128 internal constant iMAXTIME = 8 * 7 * 86400; // PARTNER NEEDS NEW TIME CHANGE THIS TODO
+    int128 internal constant iMAXTIME = 8 * 7 * 86400;
+    int128 internal constant iMAXTIME_PARTNER = 208 * 7 * 86400; // 4 years
     uint internal constant MULTIPLIER = 1 ether;    
 
     /*//////////////////////////////////////////////////////////////
@@ -584,13 +585,34 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
         if (_tokenId != 0) {
             // Calculate slopes and biases
             // Kept at zero when they have to
-            if (old_locked.end > block.timestamp && old_locked.amount > 0) {
-                u_old.slope = old_locked.amount / iMAXTIME;
-                u_old.bias = u_old.slope * int128(int256(old_locked.end - block.timestamp));
-            }
-            if (new_locked.end > block.timestamp && new_locked.amount > 0) {
-                u_new.slope = new_locked.amount / iMAXTIME;
-                u_new.bias = u_new.slope * int128(int256(new_locked.end - block.timestamp));
+            if (isPartnerToken[_tokenId]) {
+                if (old_locked.end > block.timestamp && old_locked.amount > 0) {
+                    if (numEpoch > 200) {
+                        u_old.slope = old_locked.amount / iMAXTIME;
+                        u_old.bias = u_old.slope * int128(int256(old_locked.end - block.timestamp));
+                    } else {
+                        u_old.slope = 0; // ? I think it must be 0
+                        u_old.bias = old_locked.amount;
+                    }
+                }
+                if (new_locked.end > block.timestamp && new_locked.amount > 0) {
+                    if (numEpoch > 200) {                
+                        u_new.slope = new_locked.amount / iMAXTIME;
+                        u_new.bias = u_new.slope * int128(int256(new_locked.end - block.timestamp));
+                    } else {
+                        u_new.slope = 0; // ? I think it must be 0
+                        u_new.bias = new_locked.amount;
+                    }                    
+                }
+            } else {
+                if (old_locked.end > block.timestamp && old_locked.amount > 0) {
+                    u_old.slope = old_locked.amount / iMAXTIME;
+                    u_old.bias = u_old.slope * int128(int256(old_locked.end - block.timestamp));
+                }
+                if (new_locked.end > block.timestamp && new_locked.amount > 0) {
+                    u_new.slope = new_locked.amount / iMAXTIME;
+                    u_new.bias = u_new.slope * int128(int256(new_locked.end - block.timestamp));
+                }
             }
 
             // Read values of scheduled changes in the slope
