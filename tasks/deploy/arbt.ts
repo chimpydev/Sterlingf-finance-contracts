@@ -7,14 +7,14 @@ import testOptimismConfig from "./constants/testOptimismConfig";
 import fantomConfig from "./constants/fantomConfig";
 import testFantomConfig from "./constants/testFantomConfig";
 
-task("deploy:op", "Deploys Optimism contracts").setAction(async function (
+task("deploy:arbt", "Deploys Arbitrum testnet contracts").setAction(async function (
   taskArguments,
   { ethers }
 ) {
   const mainnet = false;
 
   const OP_CONFIG = mainnet ? arbtestnetConfig : arbtestnetConfig;
-  const FTM_CONFIG = mainnet ? fantomConfig : testFantomConfig;
+  // const FTM_CONFIG = mainnet ? fantomConfig : testFantomConfig;
 
   // Load
   const [
@@ -30,7 +30,7 @@ task("deploy:op", "Deploys Optimism contracts").setAction(async function (
     Voter,
     Minter,
     SterlingGovernor,
-    RedemptionReceiver,
+    // RedemptionReceiver,
     MerkleClaim,
   ] = await Promise.all([
     ethers.getContractFactory("Sterling"),
@@ -119,21 +119,21 @@ task("deploy:op", "Deploys Optimism contracts").setAction(async function (
     "\n"
   );
 
-  const receiver = await RedemptionReceiver.deploy(
-    OP_CONFIG.USDC,
-    sterling.address,
-    FTM_CONFIG.lzChainId,
-    OP_CONFIG.lzEndpoint,
-  );
-  await receiver.deployed();
-  console.log("RedemptionReceiver deployed to: ", receiver.address);
-  console.log("Args: ", 
-    OP_CONFIG.USDC,
-    sterling.address,
-    FTM_CONFIG.lzChainId,
-    OP_CONFIG.lzEndpoint,
-    "\n"
-  );
+  // const receiver = await RedemptionReceiver.deploy(
+  //   OP_CONFIG.USDC,
+  //   sterling.address,
+  //   FTM_CONFIG.lzChainId,
+  //   OP_CONFIG.lzEndpoint,
+  // );
+  // await receiver.deployed();
+  // console.log("RedemptionReceiver deployed to: ", receiver.address);
+  // console.log("Args: ", 
+  //   OP_CONFIG.USDC,
+  //   sterling.address,
+  //   FTM_CONFIG.lzChainId,
+  //   OP_CONFIG.lzEndpoint,
+  //   "\n"
+  // );
 
   const governor = await SterlingGovernor.deploy(escrow.address);
   await governor.deployed();
