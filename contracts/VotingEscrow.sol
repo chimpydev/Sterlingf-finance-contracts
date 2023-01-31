@@ -591,7 +591,7 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
                         u_old.slope = old_locked.amount / iMAXTIME;
                         u_old.bias = u_old.slope * int128(int256(old_locked.end - block.timestamp));
                     } else {
-                        u_old.slope = 0; // ? I think it must be 0
+                        u_old.slope = 0;
                         u_old.bias = old_locked.amount;
                     }
                 }
@@ -600,7 +600,7 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
                         u_new.slope = new_locked.amount / iMAXTIME;
                         u_new.bias = u_new.slope * int128(int256(new_locked.end - block.timestamp));
                     } else {
-                        u_new.slope = 0; // ? I think it must be 0
+                        u_new.slope = 0;
                         u_new.bias = new_locked.amount;
                     }                    
                 }
@@ -810,7 +810,9 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
 
         ++tokenId;
         uint _tokenId = tokenId;
-        isPartnerToken[_tokenId] = true
+        if (_isPartnerLock) {
+            isPartnerToken[_tokenId] = true;
+        }
         _mint(_to, _tokenId);
 
         _deposit_for(_tokenId, _value, unlock_time, locked[_tokenId], DepositType.CREATE_LOCK_TYPE);
