@@ -30,9 +30,9 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
     }
 
     struct Point {
-        int128 bias;
-        int128 slope; // # -dweight / dt
-        uint ts;
+        int128 bias; // votingPower
+        int128 slope; // # -dweight / dt        votingTier?
+        uint ts; // timestamp
         uint blk; // block
     }
     /* We cannot really do block numbers per se b/c slope is per time, not per block
@@ -526,7 +526,7 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
                              ESCROW STORAGE
     //////////////////////////////////////////////////////////////*/
 
-    mapping(address => bool) public isPartnerUser;
+    mapping(address => uint) public isPartnerToken;
     mapping(uint => uint) public user_point_epoch;
     mapping(uint => Point[1000000000]) public user_point_history; // user -> Point[user_epoch]
     mapping(uint => LockedBalance) public locked;
@@ -782,13 +782,13 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
         require(unlock_time > block.timestamp, 'Can only lock until time in the future');
         if (_isPartnerLock) {
             require(unlock_time <= block.timestamp + (MAXTIME * 26), 'Voting lock can be 4 years max');
-            isPartnerUser[_to] = true
         } else {
             require(unlock_time <= block.timestamp + MAXTIME, 'Voting lock can be 8 weeks max');
         }
 
         ++tokenId;
         uint _tokenId = tokenId;
+        isPartnerToken[_tokenId] = true
         _mint(_to, _tokenId);
 
         _deposit_for(_tokenId, _value, unlock_time, locked[_tokenId], DepositType.CREATE_LOCK_TYPE);
@@ -844,8 +844,8 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
         require(_locked.amount > 0, 'Nothing is locked');
         require(unlock_time > _locked.end, 'Can only increase lock duration');
 
-        bool isPartnerUser = isPartnerUser[msg.sender];
-        if (isPartnerUser) {
+        bool isPartnerToken = isPartnerToken[_tokenId];
+        if (isPartnerToken) {
             require(unlock_time <= block.timestamp + (MAXTIME * 26), 'Voting lock can be 4 years max');
         } else {
             require(unlock_time <= block.timestamp + MAXTIME, 'Voting lock can be 8 weeks max');
