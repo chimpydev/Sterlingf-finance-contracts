@@ -15,12 +15,12 @@ const PARTNER_MAX = ethers.BigNumber.from("78")
   .mul(MILLION)
   .mul(TOKEN_DECIMALS);
 
-const TEAM_MULTISIG = "0x52f02a075191F69E30917effc66087ad981Db703";
-const TEAM_EOA = "0x52f02a075191F69E30917effc66087ad981Db703";
+const TEAM_MULTISIG = "0x156D8FaC8cd3deB51AB194D906abfc81CF323c11"; // Done
+const TEAM_EOA = "0x156D8FaC8cd3deB51AB194D906abfc81CF323c11"; // Done
 
-const testOptimismArgs = {
+const testArbtestnetArgs = {
   // Chain const
-  lzChainId: 10011,
+  lzChainId: 421613,
   lzEndpoint: "0x72aB53a133b27Fa428ca7Dc263080807AfEc91b5",
 
   // Tokens
@@ -30,7 +30,7 @@ const testOptimismArgs = {
   // Addresses
   teamEOA: TEAM_EOA,
   teamMultisig: TEAM_MULTISIG,
-  emergencyCouncil: "0x52f02a075191F69E30917effc66087ad981Db703",
+  emergencyCouncil: "0x156D8FaC8cd3deB51AB194D906abfc81CF323c11", // Done
 
   merkleRoot:
     "",
@@ -41,7 +41,7 @@ const testOptimismArgs = {
     "0x3e22e37Cb472c872B5dE121134cFD1B57Ef06560",
   ],
   partnerAddrs: [
-    "0x52f02a075191F69E30917effc66087ad981Db703",
+    "0x156D8FaC8cd3deB51AB194D906abfc81CF323c11", // Done
     "0x82D54397B88CE80Ea2Df9aD049213ACb47dc2523",
     "0x6122a6A39a6C3f2BCd96B929Fc2066204FDb125a",
     "0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199",
@@ -65,4 +65,4 @@ const testOptimismArgs = {
   partnerMax: PARTNER_MAX,
 };
 
-export default testOptimismArgs;
+export default testArbtestnetArgs;

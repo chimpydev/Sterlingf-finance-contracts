@@ -15,8 +15,6 @@ contract Sterling is ISterling {
 
     bool public initialMinted;
     address public minter;
-    address public redemptionReceiver;
-    address public merkleClaim;
 
     event Transfer(address indexed from, address indexed to, uint value);
     event Approval(address indexed owner, address indexed spender, uint value);
@@ -30,16 +28,6 @@ contract Sterling is ISterling {
     function setMinter(address _minter) external {
         require(msg.sender == minter);
         minter = _minter;
-    }
-
-    function setRedemptionReceiver(address _receiver) external {
-        require(msg.sender == minter);
-        redemptionReceiver = _receiver;
-    }
-
-    function setMerkleClaim(address _merkleClaim) external {
-        require(msg.sender == minter);
-        merkleClaim = _merkleClaim;
     }
 
     // Initial mint: total 900k
@@ -93,9 +81,11 @@ contract Sterling is ISterling {
         return true;
     }
 
-    function claim(address account, uint amount) external returns (bool) {
-        require(msg.sender == redemptionReceiver || msg.sender == merkleClaim);
-        _mint(account, amount);
-        return true;
+    function burn(address account, uint amount) external {
+        require(msg.sender == minter);
+        totalSupply -= amount;
+        unchecked {
+            balanceOf[account] -= amount;
+        }
     }
 }

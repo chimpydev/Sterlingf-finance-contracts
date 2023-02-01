@@ -7,6 +7,6 @@ interface ISterling {
     function transfer(address, uint) external returns (bool);
     function transferFrom(address,address,uint) external returns (bool);
     function mint(address, uint) external returns (bool);
+    function burn(address, uint) external;
     function minter() external returns (address);
-    function claim(address, uint) external returns (bool);
 }

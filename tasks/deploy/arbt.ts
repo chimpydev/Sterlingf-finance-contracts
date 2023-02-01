@@ -150,8 +150,8 @@ task("deploy:arbt", "Deploys Arbitrum testnet contracts").setAction(async functi
   await sterling.initialMint(OP_CONFIG.teamEOA);
   console.log("Initial minted");
 
-  await sterling.setRedemptionReceiver(receiver.address);
-  console.log("RedemptionReceiver set");
+  // await sterling.setRedemptionReceiver(receiver.address);
+  // console.log("RedemptionReceiver set");
 
   await sterling.setMerkleClaim(claim.address);
   console.log("MerkleClaim set");
@@ -177,8 +177,8 @@ task("deploy:arbt", "Deploys Arbitrum testnet contracts").setAction(async functi
   await distributor.setDepositor(minter.address);
   console.log("Depositor set");
 
-  await receiver.setTeam(OP_CONFIG.teamMultisig)
-  console.log("Team set for receiver");
+  // await receiver.setTeam(OP_CONFIG.teamMultisig)
+  // console.log("Team set for receiver");
 
   await governor.setTeam(OP_CONFIG.teamMultisig)
   console.log("Team set for governor");
