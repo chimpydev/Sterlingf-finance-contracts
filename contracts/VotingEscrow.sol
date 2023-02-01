@@ -868,8 +868,8 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
         require(_locked.amount > 0, 'Nothing is locked');
         require(unlock_time > _locked.end, 'Can only increase lock duration');
 
-        bool isPartnerToken = isPartnerToken[_tokenId];
-        if (isPartnerToken) {
+        bool _isPartnerToken = isPartnerToken[_tokenId];
+        if (_isPartnerToken) {
             require(unlock_time <= block.timestamp + (MAXTIME * 26), 'Voting lock can be 4 years max');
         } else {
             require(unlock_time <= block.timestamp + MAXTIME, 'Voting lock can be 8 weeks max');

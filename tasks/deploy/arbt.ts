@@ -21,7 +21,7 @@ task("deploy:arbt", "Deploys Arbitrum testnet contracts").setAction(async functi
     Library,
     VeArtProxy,
     VotingEscrow,
-    RewardsDistributor,
+    // RewardsDistributor,
     Voter,
     Minter,
     // SterlingGovernor,
@@ -34,7 +34,7 @@ task("deploy:arbt", "Deploys Arbitrum testnet contracts").setAction(async functi
     ethers.getContractFactory("SterlingLibrary"),
     ethers.getContractFactory("VeArtProxy"),
     ethers.getContractFactory("VotingEscrow"),
-    ethers.getContractFactory("RewardsDistributor"),
+    // ethers.getContractFactory("RewardsDistributor"),
     ethers.getContractFactory("Voter"),
     ethers.getContractFactory("Minter"),
     // ethers.getContractFactory("SterlingGovernor"),
@@ -75,10 +75,10 @@ task("deploy:arbt", "Deploys Arbitrum testnet contracts").setAction(async functi
   console.log("VotingEscrow deployed to: ", escrow.address);
   console.log("Args: ", sterling.address, artProxy.address, "\n");
 
-  const distributor = await RewardsDistributor.deploy(escrow.address);
-  await distributor.deployed();
-  console.log("RewardsDistributor deployed to: ", distributor.address);
-  console.log("Args: ", escrow.address, "\n");
+  // const distributor = await RewardsDistributor.deploy(escrow.address);
+  // await distributor.deployed();
+  // console.log("RewardsDistributor deployed to: ", distributor.address);
+  // console.log("Args: ", escrow.address, "\n");
 
   const voter = await Voter.deploy(
     escrow.address,
@@ -106,7 +106,7 @@ task("deploy:arbt", "Deploys Arbitrum testnet contracts").setAction(async functi
   console.log("Args: ", 
     voter.address,
     escrow.address,
-    distributor.address,
+    // distributor.address,
     "\n"
   );
 
@@ -141,8 +141,8 @@ task("deploy:arbt", "Deploys Arbitrum testnet contracts").setAction(async functi
   await voter.setEmergencyCouncil(ARBTESTNET_CONFIG.teamMultisig);
   console.log("Emergency Council set");
 
-  await distributor.setDepositor(minter.address);
-  console.log("Depositor set");
+  // await distributor.setDepositor(minter.address);
+  // console.log("Depositor set");
 
   // await governor.setTeam(ARBTESTNET_CONFIG.teamMultisig)
   // console.log("Team set for governor");
