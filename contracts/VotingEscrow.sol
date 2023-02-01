@@ -124,11 +124,6 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
         _entered_state = _not_entered;
     }
 
-    modifier onlyMinterContract() {
-        require(msg.sender == minterContract, "VotingEscrow: Not allowed to do this, you must be the Minter Contract");
-        _;
-    }
-
     /*///////////////////////////////////////////////////////////////
                              METADATA STORAGE
     //////////////////////////////////////////////////////////////*/
@@ -842,7 +837,8 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
     /// @param _value Amount to deposit
     /// @param _lock_duration Number of seconds to lock tokens for (rounded down to nearest week)
     /// @param _to Address to deposit
-    function create_lock_for_partner(uint _value, uint _lock_duration, address _to) external nonreentrant onlyMinterContract returns (uint) {
+    function create_lock_for_partner(uint _value, uint _lock_duration, address _to) external nonreentrant returns (uint) {
+        require(msg.sender == minterContract, "VotingEscrow: Not allowed to do this, you must be the Minter Contract");
         return _create_lock(_value, _lock_duration, _to, true);
     }
 

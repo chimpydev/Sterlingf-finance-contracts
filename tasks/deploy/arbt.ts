@@ -1,11 +1,6 @@
 import { task } from "hardhat/config";
 
-import optimismConfig from "./constants/optimismConfig";
 import arbtestnetConfig from "./constants/arbtestnetConfig";
-import testOptimismConfig from "./constants/testOptimismConfig";
-
-import fantomConfig from "./constants/fantomConfig";
-import testFantomConfig from "./constants/testFantomConfig";
 
 task("deploy:arbt", "Deploys Arbitrum testnet contracts").setAction(async function (
   taskArguments,
@@ -133,8 +128,12 @@ task("deploy:arbt", "Deploys Arbitrum testnet contracts").setAction(async functi
   await escrow.setVoter(voter.address);
   console.log("Voter set");
 
+    // Initial veSTERLING distro
+    await escrow.setMinterContract(
+      minter.address
+    );
   await escrow.setTeam(ARBTESTNET_CONFIG.teamMultisig);
-  console.log("Team set for escrow");
+  console.log("Team set & Minter Contract set for escrow");
 
   await voter.setGovernor(ARBTESTNET_CONFIG.teamMultisig);
   console.log("Governor set");
@@ -154,15 +153,8 @@ task("deploy:arbt", "Deploys Arbitrum testnet contracts").setAction(async functi
   await voter.initialize(tokenWhitelist, minter.address);
   console.log("Whitelist set");
 
-  // Initial veSTERLING distro
-  await escrow.setTeam(
-    ARBTESTNET_CONFIG.emergencyCouncil
-  );
-
-  // Initial veSTERLING distro
-  await escrow.setMinterContract(
-    minter.address
-  );
+  console.log("MINTER CONTRACT ON ESCROW", await escrow.team())
+  console.log("MINTER CONTRACT ON ESCROW", await escrow.minterContract())
 
   // Initial veSTERLING distro
   await minter.initialize(
@@ -175,5 +167,5 @@ task("deploy:arbt", "Deploys Arbitrum testnet contracts").setAction(async functi
   await minter.setTeam(ARBTESTNET_CONFIG.teamMultisig)
   console.log("Team set for minter");
 
-  console.log("Optimism contracts deployed");
+  console.log("Arbitrum contracts deployed");
 });
