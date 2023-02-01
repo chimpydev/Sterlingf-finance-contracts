@@ -126,6 +126,7 @@ contract VotingEscrow is IERC721, IERC721Metadata, IVotes {
 
     modifier onlyMinterContract() {
         require(msg.sender == minterContract, "VotingEscrow: Not allowed to do this, you must be the Minter Contract");
+        _;
     }
 
     /*///////////////////////////////////////////////////////////////

@@ -35,7 +35,7 @@ contract Minter is IMinter {
 
     constructor(
         address __voter, // the voting & distribution system
-        address __ve, // the ve(3,3) system that will be locked into
+        address __ve // the ve(3,3) system that will be locked into
         // address __rewards_distributor // the distribution system that ensures users aren't diluted
     ) {
         initializer = msg.sender;
