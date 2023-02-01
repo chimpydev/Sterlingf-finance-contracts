@@ -104,7 +104,7 @@ task("deploy:arbt", "Deploys Arbitrum testnet contracts").setAction(async functi
   const minter = await Minter.deploy(
     voter.address,
     escrow.address,
-    distributor.address
+    // distributor.address
   );
   await minter.deployed();
   console.log("Minter deployed to: ", minter.address);
@@ -153,6 +153,16 @@ task("deploy:arbt", "Deploys Arbitrum testnet contracts").setAction(async functi
   const tokenWhitelist = nativeToken.concat(ARBTESTNET_CONFIG.tokenWhitelist);
   await voter.initialize(tokenWhitelist, minter.address);
   console.log("Whitelist set");
+
+  // Initial veSTERLING distro
+  await escrow.setTeam(
+    ARBTESTNET_CONFIG.emergencyCouncil
+  );
+
+  // Initial veSTERLING distro
+  await escrow.setMinterContract(
+    minter.address
+  );
 
   // Initial veSTERLING distro
   await minter.initialize(
