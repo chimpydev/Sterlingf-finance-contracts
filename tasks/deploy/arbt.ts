@@ -29,7 +29,7 @@ task("deploy:arbt", "Deploys Arbitrum testnet contracts").setAction(async functi
     RewardsDistributor,
     Voter,
     Minter,
-    SterlingGovernor,
+    // SterlingGovernor,
   ] = await Promise.all([
     ethers.getContractFactory("Sterling"),
     ethers.getContractFactory("GaugeFactory"),
@@ -42,7 +42,7 @@ task("deploy:arbt", "Deploys Arbitrum testnet contracts").setAction(async functi
     ethers.getContractFactory("RewardsDistributor"),
     ethers.getContractFactory("Voter"),
     ethers.getContractFactory("Minter"),
-    ethers.getContractFactory("SterlingGovernor"),
+    // ethers.getContractFactory("SterlingGovernor"),
   ]);
 
   const sterling = await Sterling.deploy();
@@ -115,10 +115,10 @@ task("deploy:arbt", "Deploys Arbitrum testnet contracts").setAction(async functi
     "\n"
   );
 
-  const governor = await SterlingGovernor.deploy(escrow.address);
-  await governor.deployed();
-  console.log("SterlingGovernor deployed to: ", governor.address);
-  console.log("Args: ", escrow.address, "\n");
+  // const governor = await SterlingGovernor.deploy(escrow.address);
+  // await governor.deployed();
+  // console.log("SterlingGovernor deployed to: ", governor.address);
+  // console.log("Args: ", escrow.address, "\n");
 
   // Initialize
   await sterling.initialMint(ARBTESTNET_CONFIG.teamEOA);
@@ -145,8 +145,8 @@ task("deploy:arbt", "Deploys Arbitrum testnet contracts").setAction(async functi
   await distributor.setDepositor(minter.address);
   console.log("Depositor set");
 
-  await governor.setTeam(ARBTESTNET_CONFIG.teamMultisig)
-  console.log("Team set for governor");
+  // await governor.setTeam(ARBTESTNET_CONFIG.teamMultisig)
+  // console.log("Team set for governor");
 
   // Whitelist
   const nativeToken = [sterling.address];
