@@ -109,7 +109,6 @@ const arbArgs = {
     "0x866Cb0E0D7Fd85b539c7E2a49a26804bE43f3127", // Done treasury
     "0x866Cb0E0D7Fd85b539c7E2a49a26804bE43f3127", // Done treasury
     "0x866Cb0E0D7Fd85b539c7E2a49a26804bE43f3127", // Done treasury
-    // TEAM_EOA, // TEST
   ],
   partnerAmts: [
     TEN_THOUSAND,

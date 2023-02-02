@@ -5,6 +5,7 @@
 // Runtime Environment's members available in the global scope.
 import {ethers} from 'hardhat';
 import 'dotenv/config';
+import axios from 'axios';
 
 const hre = require('hardhat');
 let contractArgsMap = new Map<string, any[]>([
@@ -46,32 +47,7 @@ const contractAddys = [
   '0x9EDEA5b1E099aB93DC3e98dF63DC1B31fb3FEf05'
 ]
 
-// export const ftmscanApi = axios.create({
-//   baseURL: 'https://api.arbiscan.io/api',
-// });
 
-// export const getContractAbi = async (contractAddress: string) => {
-//   try {
-//     const response = await ftmscanApi.get('/', {
-//       params: {
-//         module: 'contract',
-//         action: 'getabi',
-//         address: contractAddress,
-//         apikey: process.env.ARB_SCAN_API_KEY
-//       }
-//     });
-//     return response.data.result;
-//   } catch (error) {
-//     console.error(error);
-//   }
-// };
-
-// export const getContractAt = async (address: string, signer: any) => {
-//     //   const signer = ethers.getDefaultProvider();
-//       const abi = await getContractAbi(address);
-//       const contract = new ethers.Contract(address, abi, signer);
-//       return contract;
-//   };
 
 async function main() {
 // Get deployer account
