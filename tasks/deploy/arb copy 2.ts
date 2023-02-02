@@ -1,14 +1,6 @@
 import { task } from "hardhat/config";
 
 import arbconfig from "./constants/arbConfig";
-import SterlingABI from "../../artifacts/contracts/Sterling.sol/Sterling.json";
-import GaugeFactoryABI from "../../artifacts/contracts/factories/GaugeFactory.sol/GaugeFactory.json";
-import BribeFactoryABI from "../../artifacts/contracts/factories/BribeFactory.sol/BribeFactory.json";
-import PairFactoryABI from "../../artifacts/contracts/factories/PairFactory.sol/PairFactory.json";
-import RouterABI from "../../artifacts/contracts/Router.sol/Router.json";
-import SterlingLibraryABI from "../../artifacts/contracts/SterlingLibrary.sol/SterlingLibrary.json";
-import VeArtProxyABI from "../../artifacts/contracts/VeArtProxy.sol/VeArtProxy.json";
-import VotingEscrowABI from "../../artifacts/contracts/VotingEscrow.sol/VotingEscrow.json";
 
 task("deploy:arb", "Deploys Arbitrum contracts").setAction(async function (
   taskArguments,
@@ -50,29 +42,175 @@ task("deploy:arb", "Deploys Arbitrum contracts").setAction(async function (
 
   const hre = require('hardhat');
 
-  const getContractAt = async (address: string, _abi: any) => {
-    const [deployer] = await ethers.getSigners();
-      const abi = _abi;
-      const contract = new ethers.Contract(address, abi, deployer);
-      return contract;
-  };
+  const sterling = await Sterling.deploy();
+  await sterling.deployed();
+  console.log("Sterling deployed to: ", sterling.address);
 
-  const sterling = await getContractAt("0xfA157458912D54492df38448c613375C772F2b08", SterlingABI.abi);
+  const timeFrame: number = 15000;
+  console.log(`\n==================================================`);
+  console.log(`Waiting ${timeFrame / 1000} sec before verification`);
+  await new Promise((resolve) => setTimeout(resolve, timeFrame));
 
-  const gaugeFactory = await getContractAt("0xa548F738Bc67080F1722DCED74003D74d75fB80b", GaugeFactoryABI.abi);
+  try {
+    // Verify contract
+    await hre.run('verify:verify', {
+        address: sterling.address,
+        contract: `contracts/Sterling.sol:Sterling`,
+        constructorArguments: [],
+        network: 42161,
+        apiKey: {
+            opera: process.env.ARB_SCAN_API_KEY,
+        },
+    });    
+  } catch (error) {
+    console.log(error)  
+  }
 
-  const bribeFactory = await getContractAt("0x1eaC9A7be65c2dA2EBA57353db08f3298E01079A", BribeFactoryABI.abi);
+  const gaugeFactory = await GaugeFactory.deploy();
+  await gaugeFactory.deployed();
+  console.log("GaugeFactory deployed to: ", gaugeFactory.address);
 
-  const pairFactory = await getContractAt("0xEa3Ae0305b4E3ed7BF9E762Ba2C5e35aD6E1acFc", PairFactoryABI.abi);
+    console.log(`\n==================================================`);
+  console.log(`Waiting ${timeFrame / 1000} sec before verification`);
+  await new Promise((resolve) => setTimeout(resolve, timeFrame));
 
-  const router = await getContractAt("0x0B4B7C9a795047a0631459f08bC7133b23612a9E", RouterABI.abi);
+  try {
+    // Verify contract
+    await hre.run('verify:verify', {
+        address: gaugeFactory.address,
+        // contract: `contracts/factories/GaugeFactory.sol:GaugeFactory`,
+        constructorArguments: [],
+        network: 42161,
+        apiKey: {
+            opera: process.env.ARB_SCAN_API_KEY,
+        },
+    });    
+  } catch (error) {
+    console.log(error)  
+  }
 
-  const library = await getContractAt("0xf0a3eBdea872a195AE81519BccEB3226A6eb32bc", SterlingLibraryABI.abi);
+  const bribeFactory = await BribeFactory.deploy();
+  await bribeFactory.deployed();
+  console.log("BribeFactory deployed to: ", bribeFactory.address);
 
-  const artProxy = await getContractAt("0xE971BFBeFB4FfF23B31D0A4D5a10F9F4F55B40eD", VeArtProxyABI.abi);
-  const escrow = await getContractAt("0xE0FDf6770Ed596327e5E34eE94a6815B04C55024", VotingEscrowABI.abi);
+    console.log(`\n==================================================`);
+  console.log(`Waiting ${timeFrame / 1000} sec before verification`);
+  await new Promise((resolve) => setTimeout(resolve, timeFrame));
 
-  let timeFrame = 15000
+  try {
+    // Verify contract
+    await hre.run('verify:verify', {
+        address: bribeFactory.address,
+        // contract: `contracts/factories/BribeFactory.sol:BribeFactory`,
+        constructorArguments: [],
+        network: 42161,
+        apiKey: {
+            opera: process.env.ARB_SCAN_API_KEY,
+        },
+    });    
+  } catch (error) {
+    console.log(error)  
+  }
+
+  const pairFactory = await PairFactory.deploy();
+  await pairFactory.deployed();
+  console.log("PairFactory deployed to: ", pairFactory.address);
+
+    console.log(`\n==================================================`);
+  console.log(`Waiting ${timeFrame / 1000} sec before verification`);
+  await new Promise((resolve) => setTimeout(resolve, timeFrame));
+
+  try {
+    // Verify contract
+    await hre.run('verify:verify', {
+        address: pairFactory.address,
+        // contract: `contracts/factories/PairFactory.sol:PairFactory`,
+        constructorArguments: [],
+        network: 42161,
+        apiKey: {
+            opera: process.env.ARB_SCAN_API_KEY,
+        },
+    });    
+  } catch (error) {
+    console.log(error)  
+  }
+
+  const router = await Router.deploy(pairFactory.address, ARB_CONFIG.WETH);
+  await router.deployed();
+  console.log("Router deployed to: ", router.address);
+  console.log("Args: ", pairFactory.address, ARB_CONFIG.WETH, "\n");
+
+    console.log(`\n==================================================`);
+  console.log(`Waiting ${timeFrame / 1000} sec before verification`);
+  await new Promise((resolve) => setTimeout(resolve, timeFrame));
+
+  try {
+    // Verify contract
+    await hre.run('verify:verify', {
+        address: router.address,
+        contract: `contracts/Router.sol:Router`,
+        constructorArguments: [pairFactory.address, ARB_CONFIG.WETH],
+        network: 42161,
+        apiKey: {
+            opera: process.env.ARB_SCAN_API_KEY,
+        },
+    });    
+  } catch (error) {
+    console.log(error)  
+  }
+
+  const library = await Library.deploy(router.address);
+  await library.deployed();
+  console.log("SterlingLibrary deployed to: ", library.address);
+  console.log("Args: ", router.address, "\n");
+
+    console.log(`\n==================================================`);
+  console.log(`Waiting ${timeFrame / 1000} sec before verification`);
+  await new Promise((resolve) => setTimeout(resolve, timeFrame));
+
+  try {
+    // Verify contract
+    await hre.run('verify:verify', {
+        address: library.address,
+        contract: `contracts/SterlingLibrary.sol:SterlingLibrary`,
+        constructorArguments: [router.address],
+        network: 42161,
+        apiKey: {
+            opera: process.env.ARB_SCAN_API_KEY,
+        },
+    });    
+  } catch (error) {
+    console.log(error)  
+  }
+
+  const artProxy = await VeArtProxy.deploy();
+  await artProxy.deployed();
+  console.log("VeArtProxy deployed to: ", artProxy.address);
+
+    console.log(`\n==================================================`);
+  console.log(`Waiting ${timeFrame / 1000} sec before verification`);
+  await new Promise((resolve) => setTimeout(resolve, timeFrame));
+
+  try {
+    // Verify contract
+    await hre.run('verify:verify', {
+        address: artProxy.address,
+        contract: `contracts/VeArtProxy.sol:VeArtProxy`,
+        constructorArguments: [],
+        network: 42161,
+        apiKey: {
+            opera: process.env.ARB_SCAN_API_KEY,
+        },
+    });    
+  } catch (error) {
+    console.log(error)  
+  }
+
+  const escrow = await VotingEscrow.deploy(sterling.address, artProxy.address);
+  await escrow.deployed();
+  console.log("VotingEscrow deployed to: ", escrow.address);
+  console.log("Args: ", sterling.address, artProxy.address, "\n");
+
     console.log(`\n==================================================`);
   console.log(`Waiting ${timeFrame / 1000} sec before verification`);
   await new Promise((resolve) => setTimeout(resolve, timeFrame));
