@@ -30,9 +30,9 @@ contract Sterling is ISterling {
         minter = _minter;
     }
 
-    // Initial mint: total 900k
+    // Initial mint: total 600k
     // 100k for "Genesis" pools
-    // 500k for future partners
+    // 500k for treasury
     function initialMint(address _recipient) external {
         require(msg.sender == minter && !initialMinted);
         initialMinted = true;
