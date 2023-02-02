@@ -20,7 +20,7 @@ const TEAM_EOA = "0x866Cb0E0D7Fd85b539c7E2a49a26804bE43f3127"; // Done treasury
 
 const arbArgs = {
   // Chain const
-  lzChainId: 421613,
+  lzChainId: 42161,
   lzEndpoint: "0x72aB53a133b27Fa428ca7Dc263080807AfEc91b5", // NOT NEEDED
 
   // Tokens

@@ -5,6 +5,9 @@
   "directories": {
     "lib": "lib"
   },
+  "scripts": {
+    "verify": "npx hardhat run --network arbmainnet tasks/deploy/arbVerifyContracts.ts"
+  },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.6",
     "@nomiclabs/hardhat-etherscan": "^3.0.4",
