@@ -35,28 +35,12 @@ const config: HardhatUserConfig = {
       url: "https://rpc.fantom.network",
       accounts: [process.env.PRIVATE_KEY],
     },
-    testnetarb: {
-      url: `https://arb-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
-      accounts: [process.env.PRIVATE_KEY],
-    },
-    arbmainnet: {
-      url: `https://arb-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
-      accounts: [process.env.PRIVATE_KEY],
-    },
-    arbitumOne: {
+    arbitrumOne: {
       url: `https://arb-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
       accounts: [process.env.PRIVATE_KEY],
     },
     ftmTestnet: {
       url: "https://rpc.testnet.fantom.network",
-      accounts: [process.env.PRIVATE_KEY],
-    },
-    optimisticEthereum: {
-      url: "https://mainnet.optimism.io",
-      accounts: [process.env.PRIVATE_KEY],
-    },
-    optimisticKovan: {
-      url: "https://kovan.optimism.io",
       accounts: [process.env.PRIVATE_KEY],
     },
   },
@@ -91,11 +75,7 @@ const config: HardhatUserConfig = {
     apiKey: {
       opera: process.env.FTM_SCAN_API_KEY,
       ftmTestnet: process.env.FTM_SCAN_API_KEY,
-      testnetarb: process.env.ARBT_SCAN_API_KEY,
-      arbmainnet: process.env.ARB_SCAN_API_KEY,
       arbitrumOne: process.env.ARB_SCAN_API_KEY,
-      optimisticEthereum: process.env.OP_SCAN_API_KEY,
-      optimisticKovan: process.env.OP_SCAN_API_KEY,
     }
   }
 };

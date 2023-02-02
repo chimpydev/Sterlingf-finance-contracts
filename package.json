@@ -6,7 +6,9 @@
     "lib": "lib"
   },
   "scripts": {
-    "verify": "npx hardhat run --network arbmainnet tasks/deploy/arbVerifyContracts.ts"
+    "verify": "npx hardhat run --network arbitrumOne tasks/deploy/arbVerifyContracts.ts",
+    "verify2": "npx hardhat verify --contract contracts/factories/GaugeFactory.sol:GaugeFactory 0x302F20EE3e825590a928CB243608A2f848336BcB --network arbitrumOne",
+    "verify3": "npx hardhat verify --contract contracts/factories/GaugeFactory.sol:GaugeFactory --constructor-args scripts/verifyArgs.ts 0x9fA2218189f29F80a5A1632535b407B665Fe00a6 --network fantom"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.6",

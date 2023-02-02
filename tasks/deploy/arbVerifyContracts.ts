@@ -8,7 +8,7 @@ import 'dotenv/config';
 
 const hre = require('hardhat');
 let contractArgsMap = new Map<string, any[]>([
-  ['Sterling', []],
+  // ['Sterling', []],
   ['GaugeFactory', []],
   ['BribeFactory', []],
   ['PairFactory', []],
@@ -21,7 +21,7 @@ let contractArgsMap = new Map<string, any[]>([
 ]);
 
 const contractNames = [
-  'Sterling',
+  // 'Sterling',
   'GaugeFactory',
   'BribeFactory',
   'PairFactory',
@@ -34,7 +34,7 @@ const contractNames = [
 ]
 
 const contractAddys = [
-  '0x356167aaf46C80Fe8E1817785d3EE943E08c644b',
+  // '0x356167aaf46C80Fe8E1817785d3EE943E08c644b',
   '0x302F20EE3e825590a928CB243608A2f848336BcB',
   '0x8c03AE02f0a5EA3f75D7604eaeFa2Dd074AE8947',
   '0x0d1C850D8109EAEF39cA310610555175A6A58E45',
@@ -45,6 +45,33 @@ const contractAddys = [
   '0x0849267e99F3A297c301f79477468d0524f6be20',
   '0x9EDEA5b1E099aB93DC3e98dF63DC1B31fb3FEf05'
 ]
+
+// export const ftmscanApi = axios.create({
+//   baseURL: 'https://api.arbiscan.io/api',
+// });
+
+// export const getContractAbi = async (contractAddress: string) => {
+//   try {
+//     const response = await ftmscanApi.get('/', {
+//       params: {
+//         module: 'contract',
+//         action: 'getabi',
+//         address: contractAddress,
+//         apikey: process.env.ARB_SCAN_API_KEY
+//       }
+//     });
+//     return response.data.result;
+//   } catch (error) {
+//     console.error(error);
+//   }
+// };
+
+// export const getContractAt = async (address: string, signer: any) => {
+//     //   const signer = ethers.getDefaultProvider();
+//       const abi = await getContractAbi(address);
+//       const contract = new ethers.Contract(address, abi, signer);
+//       return contract;
+//   };
 
 async function main() {
 // Get deployer account
@@ -70,7 +97,7 @@ for (const contractName of contractNames) {
             constructorArguments: [...deployedContractArgs],
             network: deployNetwork,
             apiKey: {
-                opera: process.env.ETHERSCAN_API_KEY,
+                opera: process.env.ARB_SCAN_API_KEY,
             },
         });    
     } catch (error) {
