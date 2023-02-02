@@ -30,13 +30,13 @@ contract Sterling is ISterling {
         minter = _minter;
     }
 
-    // Initial mint: total 600k
+    // Initial mint: total 750k
     // 100k for "Genesis" pools
-    // 500k for treasury
+    // 650k for treasury
     function initialMint(address _recipient) external {
         require(msg.sender == minter && !initialMinted);
         initialMinted = true;
-        _mint(_recipient, 6 * 1e5 * 1e18);
+        _mint(_recipient, 75 * 1e4 * 1e18);
     }
 
     function approve(address _spender, uint _value) external returns (bool) {
