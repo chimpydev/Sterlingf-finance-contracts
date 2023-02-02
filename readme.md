@@ -29,6 +29,7 @@ Deployment contains 3 steps:
 
 <!-- 1. `npx hardhat deploy:op` which deploys the core contracts, along with RedemptionReceiver, to Optimism. -->
 1. `npx hardhat deploy:arbt` which deploys the core contracts, along with RedemptionReceiver, to Arb Testnet.
+1. `npx hardhat deploy:arb` which deploys the core contracts, along to Arb.
 
 2. `npx hardhat deploy:ftm` which deploys the RedemptionSender contract to Fantom. The RedemptionReceiver address from Step 1 should be recorded in `deployed.ts` prior.
 

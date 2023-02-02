@@ -39,6 +39,10 @@ const config: HardhatUserConfig = {
       url: `https://arb-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
       accounts: [process.env.PRIVATE_KEY],
     },
+    arbmainnet: {
+      url: `https://arb-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
+      accounts: [process.env.PRIVATE_KEY],
+    },
     ftmTestnet: {
       url: "https://rpc.testnet.fantom.network",
       accounts: [process.env.PRIVATE_KEY],
